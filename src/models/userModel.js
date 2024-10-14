@@ -1,12 +1,10 @@
-import {db} from '../config/firebaseConfig.js'
-
-class UserModel {
-    constructor(){}
-
-    async createUser(data){
-        db.collection('Users').add(data)
+class User {
+    constructor(name, email, password, phone) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
     }
-   
 }
 
-export default UserModel
+export default User;

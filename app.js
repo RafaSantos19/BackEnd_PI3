@@ -1,23 +1,26 @@
-//Libs
 import express from "express";
-//Modules
+import cors from "cors";
+import bodyParser from "body-parser";
 
+import { firebaseApp } from "./src/config/firebaseConfig.js";
+import userRouter from "./src/routes/userRouter.js";
 
+firebaseApp
 const app = express();
-const PORT = 8080;
+const port = 8080;
+//FIXME:const port = process.env.PORT;
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
 
-app.post('/user', (req, res) => {
-    const data = req.body
-    const userRef = db.collection('User').add
-})
+app.use("/user", userRouter)
 
-app.listen(PORT, err => {
+app.listen(port, err => {
     if(err){
         console.log("Erro ao iniciar o servidor")
         return err
     }else{
-        console.log(`Servido rodando na porta ${PORT}`);
+        console.log(`Servido rodando na porta ${port}`);
     }
 });
