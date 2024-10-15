@@ -7,27 +7,37 @@ class UserRepository{
     }
 
     async createUser(user){
-        const { name, email, password, phone } = user;
-
-        try {
-            // Criando usuário com email e senha
-            const userCredential = await this.doAuth.doCreateUserWithEmailAndPassword(email, password);
-            const { uid } = userCredential.user;
-
-            // Salvando informações adicionais do usuário no Firestore
-            await dataBase.collection('Users').doc(uid).set({
-                name,
-                email,
-                phone,
-                createdAt: new Date(),
+            this.doAuth.doCreateUserWithEmailAndPassword(user.email, user.password).then( (userCredential) => {
+                const user = userCredential.user;
+             // const { uid } = userCredential.user;
+                return userCredential;
+            }).catch( (err) => {
+                console.error(err);
             });
 
-            return userCredential;
-        } catch (error) {
-            console.error("Erro ao criar usuário:", error);
-            throw error;
-        }
+            /*
+            FIXME: ERRO --> collection não é uma function
+            Possível solução -- Incapsular os métodos de manipulação de dados do firestore em uma classe
+
+            await dataBase.collection('Users').doc(uid).set({
+                name,
+                 email,
+                 phone,
+                 createdAt: new Date(),
+             });
+            */
+
     };
+
+    async signIn(user){
+        this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then( (userCredential) => {
+            const user = userCredential.user
+        }).catch( (err) => {
+            console.error(err);
+        });
+    }
+
+
 }
 
 export default UserRepository;

@@ -6,13 +6,14 @@ import dotenv from "dotenv";
 import { firebaseApp } from "./src/config/firebaseConfig.js";
 import userRouter from "./src/routes/userRouter.js";
 
+//TODO: Criar uma classe de preFligtCheck
+
 firebaseApp
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-//FIXME:const port = process.env.PORT;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
