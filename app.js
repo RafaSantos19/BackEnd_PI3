@@ -1,13 +1,17 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
 
 import { firebaseApp } from "./src/config/firebaseConfig.js";
 import userRouter from "./src/routes/userRouter.js";
 
 firebaseApp
+
+dotenv.config();
+
 const app = express();
-const port = 8080;
+const port = process.env.PORT;
 //FIXME:const port = process.env.PORT;
 
 app.use(bodyParser.urlencoded({ extended: true }));

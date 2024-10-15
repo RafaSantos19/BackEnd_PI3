@@ -1,21 +1,24 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import dotenv from "dotenv";
 
-//TODO:
-/*
-arrumar o .env 
-*/
+//TODO: Guardar a chave de acesso em um servidor
+
+dotenv.config();
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDocNy8YG81a1AlBgyHX0A5uUKH_iEl-Rc",
-    authDomain: "studio-tailine.firebaseapp.com",
-    projectId: "studio-tailine",
-    storageBucket: "studio-tailine.appspot.com",
-    messagingSenderId: "210313211648",
-    appId: "1:210313211648:web:925d32851e79b9e7718de5",
-    measurementId: "G-15SQ2CS9C4",
+    apiKey: process.env.APP_API_KEY,
+    authDomain: process.env.APP_AUTH_DOMAIN,
+    projectId: process.env.APP_PROJECT_ID,
+    storageBucket: process.env.APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.APP_MESSAGING_SENDER_ID,
+    appId: process.env.APP_APP_ID,
+    measurementId: process.env.APP_MEASUREMENT_ID,
 };
 
-export const firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const dataBase = getFirestore(firebaseApp);
 
-export const db = getFirestore(firebaseApp);
+export {firebaseApp, auth, dataBase};

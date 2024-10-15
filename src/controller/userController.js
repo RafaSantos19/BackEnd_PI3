@@ -1,7 +1,10 @@
 import User from '../models/userModel.js'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import UserRepository from '../repository/userRepository.js';
 
 class UserController{
+    constructor(){
+      this.userRepository = new UserRepository();
+    }
 
     async createUser(req, res){
           const {name, email, password, phone} = req.body;
@@ -13,14 +16,13 @@ class UserController{
 
           const user = new User(name, email, password, phone)
 
-          try {
-            const auth = getAuth();
-            await createUserWithEmailAndPassword(auth, email, password);
-            res.status(201).json(({message: "Usuário criado com sucesso"}))
-          } catch (error) {
-            console.error(error);
-            res.status(500).json({error});
-          };
+          console.log(user)
+
+          this.userRepository.createUser(user).then(() => {
+            res.status(200).json({message: "Usuário criado com sucesso"})
+          }).catch( err => {
+            res.status(500).json(err)
+          })
     };
 };
 
