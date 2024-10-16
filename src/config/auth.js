@@ -11,8 +11,7 @@ import { auth } from "./firebaseConfig.js";
 
 /*
 TODO:
-Melhorar o tratamento de erros
-
+Melhorar o tratamento de erros -- then().catch
 */
 
 class DoAuth {

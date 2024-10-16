@@ -36,13 +36,13 @@ class UserController{
             res.status(201).json({message: "Usuário criado com sucesso"})
           }).catch( err => {
             res.status(500).json(err)
-          })
-    };
+          });
+    }
 
     async signIn(req, res){
       //TODO: Pode criar um método de validação e chamalo novamente para reaproveitar código
       const {email, password} = req.body;
-      
+
       if(!email || !password){
         console.log("Informações invalidas");
         res.status(400).json({message: "Informações invalidas"});
@@ -50,14 +50,23 @@ class UserController{
 
       const user = new User(email, password)
 
-      this.userRepository.signIn(user).then( () => {
+      this.userRepository.signInUser(user).then( () => {
         res.status(200).json({message: "Login Bem sucedido"});
       }).catch( err => {
         res.status(500).json(err);
       });
+    }
 
-    };
+    async singOut(req, res){
+      this.userRepository.signOutUser().then( () => {
+        res.status(200).json({message: "Usuário deslogado com sucesso"})
+      }).catch( (err) => {
+        res.status(500).json({message: "Erro ao deslogar usuário", error: err})
+      });
+    }
 
-};
+
+
+}
 
 export default UserController;

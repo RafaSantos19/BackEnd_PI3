@@ -29,13 +29,23 @@ class UserRepository{
 
     };
 
-    async signIn(user){
+    async signInUser(user){
         this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then( (userCredential) => {
             const user = userCredential.user
         }).catch( (err) => {
             console.error(err);
         });
     }
+
+    async signOutUser(){
+        return this.doAuth.doSignOut().then( (result) => {
+            console.log("Usuário deslogado", result)
+            return result;
+        }).catch( (err) => {
+            console.error("Erro ao deslogar o usuário", err)
+            throw err;
+        });
+    };
 
 
 }

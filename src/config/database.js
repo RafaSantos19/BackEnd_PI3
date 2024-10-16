@@ -1,0 +1,1 @@
+//TODO: classe para ecapsular os métodos de manipulação de dados usando firestore 
