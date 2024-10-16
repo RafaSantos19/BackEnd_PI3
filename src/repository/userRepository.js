@@ -30,10 +30,12 @@ class UserRepository{
     };
 
     async signInUser(user){
-        this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then( (userCredential) => {
+       return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then( (userCredential) => {
             const user = userCredential.user
+           return user;
         }).catch( (err) => {
             console.error(err);
+           throw err;
         });
     }
 
