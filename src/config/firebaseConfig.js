@@ -1,24 +1,20 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import admin from 'firebase-admin';
 import { getAuth } from "firebase/auth";
 import dotenv from "dotenv";
+dotenv.config();
 
 //TODO: Guardar a chave de acesso em um servidor
 
-dotenv.config();
+const firebaseApp = admin.initializeApp({
+    credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }),
+      storageBucket: process.env.APP_STORAGE_BUCKET
+});
 
-const firebaseConfig = {
-    apiKey: process.env.APP_API_KEY,
-    authDomain: process.env.APP_AUTH_DOMAIN,
-    projectId: process.env.APP_PROJECT_ID,
-    storageBucket: process.env.APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.APP_MESSAGING_SENDER_ID,
-    appId: process.env.APP_APP_ID,
-    measurementId: process.env.APP_MEASUREMENT_ID,
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
-const dataBase = getFirestore(firebaseApp);
+const db = admin.firestore();
 
-export {firebaseApp, auth, dataBase};
+export {admin, auth, db, firebaseApp};
