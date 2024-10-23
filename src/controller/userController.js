@@ -65,7 +65,21 @@ class UserController{
       });
     }
 
+    async forgotPassword(req, res) {
+      const { email } = req.body;
 
+      if (!email) {
+          return res.status(400).json({ message: "Email é necessário" });
+      }
+
+      try {
+          await this.userRepository.sendPasswordResetEmail(email);
+          res.status(200).json({ message: "Email de recuperação enviado" });
+      } catch (error) {
+          console.error("Erro ao enviar email de recuperação: ", error);
+          res.status(500).json({ message: "Erro ao enviar email de recuperação" });
+      }
+  }
 
 }
 

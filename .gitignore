@@ -3,3 +3,6 @@ node_modules/
 
 # Ignorar arquivo .env
 .env
+
+# Ignorar firebase-adminsdk.json
+firebase-adminsdk.json

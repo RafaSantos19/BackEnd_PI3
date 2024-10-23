@@ -2,10 +2,8 @@ import {
     createUserWithEmailAndPassword,
     sendEmailVerification,
     sendPasswordResetEmail,
-    signInWithPopup,
     updatePassword,
-    signInWithEmailAndPassword,
-    GoogleAuthProvider
+    signInWithEmailAndPassword
 } from "firebase/auth";
 import { auth } from "./firebaseConfig.js";
 
@@ -17,42 +15,33 @@ Melhorar o tratamento de erros -- then().catch
 class DoAuth {
 
     async doCreateUserWithEmailAndPassword(email, password) {
-        try {
-            return await createUserWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            console.error("Erro ao criar usuário: ", error);
-            throw error; // Repropaga o erro para ser tratado posteriormente
-        }
+        return createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+            console.log("Cadastro realizado com sucesso",)
+            return userCredential.user;
+        }).catch((err) => {
+            console.error("Erro ao criar usuário: ", err);
+            throw err;
+        });
     };
 
     async doSignInWithEmailAndPassword(email, password) {
-        try {
-            return await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
+        return signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+            console.log("Login realizado com sucesso: ", userCredential.user);
+            return userCredential.user;
+        }).catch((error) => {
             console.error("Erro ao fazer login: ", error);
             throw error;
-        }
-    };
-
-    async doSignInWithGoogle() {
-        const provider = new GoogleAuthProvider();
-        try {
-            const result = await signInWithPopup(auth, provider);
-            // TODO: result.user --> Guardar informação do usuário no firestore
-            return result;
-        } catch (error) {
-            console.error("Erro ao fazer login com Google: ", error);
-            throw error;
-        }
+        });
     };
 
     async doSignOut() {
-        try {
-            return await auth.signOut();
-        } catch (error) {
-            console.error("Erro ao sair: ", error);
-            throw error;
-        }
+        return auth.signOut().then(() => {
+            console.log("Deslogado com sucesso");
+            return true;
+        }).catch(err => {
+            console.error("Erro ao sair: ", err);
+        });
+
     };
 
     //TODO: Implemetar os métodos abaixo -- Testalos
