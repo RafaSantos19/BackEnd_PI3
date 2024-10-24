@@ -1,5 +1,7 @@
-import { dataBase } from "../config/firebaseConfig.js";
+import { doc, setDoc } from "firebase/firestore";
 import DoAuth from "../config/auth.js";
+import { dataBase } from "../config/firebaseConfig.js";
+
 
 class UserRepository {
     constructor() {
@@ -7,27 +9,39 @@ class UserRepository {
     }
 
     async createUser(user) {
-        this.doAuth.doCreateUserWithEmailAndPassword(user.email, user.password).then((userCredential) => {
-            const user = userCredential.user;
-            // const { uid } = userCredential.user;
+        try {
+            const userCredential = await this.doAuth.doCreateUserWithEmailAndPassword(user.email, user.password);
+            const uid = userCredential.uid;
+
+            console.log('Usuário criado no Firebase Auth, UID:', uid);
+
+            // Usando doc() e setDoc() explicitamente
+            await setDoc(doc(dataBase, 'USER', uid), {
+                name: user.name,
+                lastName: user.lastName,
+                email: user.email,
+                phone: user.phone,
+                createdAt: new Date(),
+            });
+
+            console.log("Usuário e dados salvos com sucesso no Firestore");
             return userCredential;
-        }).catch((err) => {
-            console.error(err);
-        });
+        } catch (err) {
+            console.error("Erro ao criar usuário ou salvar dados: ", err);
+            throw err;
+        }
+    }
 
-        /*
-        FIXME: ERRO --> collection não é uma function
-        Possível solução -- Incapsular os métodos de manipulação de dados do firestore em uma classe
-
-        await dataBase.collection('Users').doc(uid).set({
-            name,
-             email,
-             phone,
-             createdAt: new Date(),
-         });
-        */
-
-    };
+    async getUserProfile(uid) {
+        try {
+            const userDocRef = doc(dataBase, 'USER', uid);
+            const userDoc = await getDoc(userDocRef);
+            return userDoc;
+        } catch (err) {
+            console.error("Erro ao buscar dados do Firestore: ", err);
+            throw err;
+        }
+    }
 
     async signInUser(user) {
         return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then((userCredential) => {
