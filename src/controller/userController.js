@@ -25,20 +25,23 @@ class UserController {
   }
 
   async getUserProfile(req, res) {
-    const idToken = req.headers.authorization?.split('Bearer ')[1]; // Token JWT enviado do frontend
+    const idToken = req.headers.authorization?.split('Bearer ')[1]; // Extrai o token JWT do cabeçalho
 
     if (!idToken) {
       return res.status(401).json({ message: "Token de autenticação não fornecido" });
     }
 
     try {
-      const decodedToken = await getAuth().verifyIdToken(idToken); // Verifica o token JWT
+      // Verifica o token JWT
+      const decodedToken = await auth.verifyIdToken(idToken);
       const uid = decodedToken.uid;
 
+      // Busque os dados do usuário no Firestore ou outro banco de dados
       const userDoc = await this.userRepository.getUserProfile(uid);
       if (!userDoc.exists()) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
+
       res.status(200).json(userDoc.data());
     } catch (err) {
       console.error("Erro ao verificar o token ou buscar o perfil do usuário: ", err);

@@ -2,7 +2,6 @@ import { doc, setDoc } from "firebase/firestore";
 import DoAuth from "../config/auth.js";
 import { dataBase } from "../config/firebaseConfig.js";
 
-
 class UserRepository {
     constructor() {
         this.doAuth = new DoAuth();
