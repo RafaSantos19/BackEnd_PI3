@@ -15,13 +15,15 @@ Melhorar o tratamento de erros -- then().catch
 class DoAuth {
 
     async doCreateUserWithEmailAndPassword(email, password) {
-        return createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-            console.log("Cadastro realizado com sucesso",)
+        return createUserWithEmailAndPassword(auth, email, password).then( userCredential => {
+            console.log("Cadastro realizado com sucesso")
             return userCredential.user;
-        }).catch((err) => {
+        }).catch(err => {
             console.error("Erro ao criar usuário: ", err);
             throw err;
         });
+
+        then().catch()
     };
 
     async doSignInWithEmailAndPassword(email, password) {
@@ -44,8 +46,6 @@ class DoAuth {
 
     };
 
-    //TODO: Implemetar os métodos abaixo -- Testalos
-
     async doPasswordReset(email) {
         try {
             return await sendPasswordResetEmail(auth, email);
@@ -54,6 +54,8 @@ class DoAuth {
             throw error;
         }
     };
+    
+    //TODO: Implemetar os métodos abaixo -- Testalos
 
     async doPasswordChange(password) {
         try {
