@@ -1,47 +1,73 @@
-import { dataBase } from "../config/firebaseConfig.js";
 import DoAuth from "../config/auth.js";
+import Database from "../config/database.js";
 
 class UserRepository {
     constructor() {
         this.doAuth = new DoAuth();
+        this.database = new Database();
     }
 
     async createUser(user) {
-        this.doAuth.doCreateUserWithEmailAndPassword(user.email, user.password).then((userCredential) => {
-            const user = userCredential.user;
-            // const { uid } = userCredential.user;
-            return userCredential;
-        }).catch((err) => {
-            console.error(err);
+        return this.doAuth.doCreateUserWithEmailAndPassword(user.email, user.password).then(userCredential => {
+            const userUid = userCredential.user.uid;            
+            return this.database.addUserDocument(user, userUid).then(() => {
+                 return userCredential;
+            });
+        }).catch(err => {
+            console.error("Erro ao criar usuário: ", err);
         });
-
-        /*
-        FIXME: ERRO --> collection não é uma function
-        Possível solução -- Incapsular os métodos de manipulação de dados do firestore em uma classe
-
-        await dataBase.collection('Users').doc(uid).set({
-            name,
-             email,
-             phone,
-             createdAt: new Date(),
-         });
-        */
-
     };
 
     async signInUser(user) {
-        return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then((userCredential) => {
-            const user = userCredential.user
-            return user;
+        return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then(async userCredential => {
+            const idToken = await userCredential.user.getIdToken()
+
+            //Pega os dados do Firestore
+            /*
+            const userInfo = userCredential.user;
+            return this.database.getDocumentById('USER', userInfo.uid)
+                .then((userData) => {
+                    if (userData) {
+                        console.log("Usuário logado com sucesso", userData);
+                        return { ...userInfo, ...userData };
+                    } else {
+                        console.error("Usuário não encontrado no Firestore");
+                        return null;
+                    }
+                });
+            */
+            return idToken;
         }).catch((err) => {
             console.error(err);
             throw err;
         });
     }
 
+    async updateUser(uid, userData) {
+        return this.database.updateDocument("USER", uid, userData).then(() => {
+            return true;
+        }).catch(err => {
+            console.error("Erro ao atualizar dados do usuário: ", err);
+            throw err;
+        });
+    }
+
+    async getUserById(uid) {
+        return this.database.getDocumentById("USER", uid).then(userData => {
+            if (userData) {
+                return userData;
+            } else {
+                console.error("Usuário não encontrado no Firestore");
+                return null;
+            }
+        }).catch(err => {
+            console.error("Erro ao buscar dados do usuário: ", err);
+            throw err;
+        });
+    }
+
     async signOutUser() {
         return this.doAuth.doSignOut().then((result) => {
-            console.log("Usuário deslogado", result)
             return result;
         }).catch((err) => {
             console.error("Erro ao deslogar o usuário", err)
@@ -49,15 +75,6 @@ class UserRepository {
         });
     };
 
-    async sendPasswordResetEmail(email) {
-        return this.doAuth.doPasswordReset(email)
-            .then(() => {
-                console.log("Email de recuperação enviado");
-            }).catch((err) => {
-                console.error("Erro ao enviar email de recuperação: ", err);
-                throw err;
-            });
-    }
 }
 
 export default UserRepository;
