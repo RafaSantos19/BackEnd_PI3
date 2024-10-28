@@ -3,12 +3,16 @@ import { db } from './firebaseConfig.js';
 
 class Database {
 
+    //TODO:Otimizar este método
     async addUserDocument(user, docId = null) {
         const data = {
             name: user.name,
+            lastName: user.lastName,
             email: user.email,
             phone: user.phone
         }
+
+        console.log("Teste de DATA: ", data)
 
         if (docId) {
             // Cria ou substitui o documento usando o ID fornecido

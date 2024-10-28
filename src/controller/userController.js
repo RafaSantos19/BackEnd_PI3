@@ -8,14 +8,13 @@ class UserController {
 
   async createUser(req, res) {
 
-    const {name, email, password, phone} = req.body;
+    const {name, lastName, email, password, phone} = req.body;
 
-    if(!name || !email || !password || !phone){
-    console.log("Informações invalidas");
-    res.status(400).json({message: "Informações invalidas"});
+    if(!name || !lastName || !email || !password || !phone){
+      return  res.status(400).json({message: "Informações invalidas"});
     };
 
-    const user = new User(name, email, password, phone);
+    const user = new User(name, lastName, email, password, phone);
 
     this.userRepository.createUser(user).then(() => {
       res.status(201).json({ message: "Usuário criado com sucesso" })
@@ -25,22 +24,26 @@ class UserController {
   }
 
   async signIn(req, res) {
-    //TODO: Pode criar um método de validação e chamalo novamente para reaproveitar código
     const { email, password } = req.body;
 
     if (!email || !password) {
-      console.log("Informações invalidas");
-      res.status(400).json({ message: "Informações invalidas" });
-    };
+        return res.status(400).json({ message: "Informações inválidas" });
+    }
 
-    const user = new User(email, password)
+    const user = { email, password };
 
-    this.userRepository.signInUser(user).then(() => {
-      res.status(200).json({ message: "Login Bem sucedido" });
-    }).catch(err => {
-      res.status(500).json(err);
-    });
-  }
+    try {
+        const { userInfo, idToken } = await this.userRepository.signInUser(user);
+        res.status(200).json({
+            message: "Login realizado com sucesso",
+            userInfo,
+            token: idToken
+        });
+    } catch (err) {
+        console.error("Erro ao fazer login:", err); // Log detalhado para análise
+        res.status(500).json({ message: "Erro ao fazer login", error: err.message });
+    }
+}
 
   async singOut(req, res) {
     this.userRepository.signOutUser().then(() => {
@@ -50,7 +53,7 @@ class UserController {
     });
   }
 
-  async forgotPassword(req, res) {
+  async sendPasswordResetEmail(req, res) {
     const { email } = req.body;
 
     if (!email) {

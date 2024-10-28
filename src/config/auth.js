@@ -3,7 +3,8 @@ import {
     sendEmailVerification,
     sendPasswordResetEmail,
     updatePassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    signOut,
 } from "firebase/auth";
 import { auth } from "./firebaseConfig.js";
 
@@ -13,7 +14,7 @@ class DoAuth {
         return createUserWithEmailAndPassword(auth, email, password).then(userCredential => {
             return userCredential;
         }).catch(err => {
-            console.error("Erro ao criar usuário: ", err);
+            console.error("(Auth) Erro ao criar usuário: ", err);
             throw err;
         });
     };
@@ -28,7 +29,7 @@ class DoAuth {
     };
 
     async doSignOut() {
-        return auth.signOut().then(() => {
+        return signOut(auth).then(() => {
             return true;
         }).catch(err => {
             console.error("Erro ao sair: ", err);
@@ -44,8 +45,6 @@ class DoAuth {
             throw error;
         });
     }
-
-
 
     //TODO: Implemetar os métodos abaixo -- Testalos
     async doPasswordChange(password) {

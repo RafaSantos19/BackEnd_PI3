@@ -9,36 +9,25 @@ class UserRepository {
 
     async createUser(user) {
         return this.doAuth.doCreateUserWithEmailAndPassword(user.email, user.password).then(userCredential => {
-            const userUid = userCredential.user.uid;            
+            const userUid = userCredential.user.uid;
             return this.database.addUserDocument(user, userUid).then(() => {
-                 return userCredential;
+                return userCredential;
             });
         }).catch(err => {
-            console.error("Erro ao criar usuário: ", err);
+            console.error("(Repository)Erro ao criar usuário: ", err);
+            throw err;
         });
     };
 
     async signInUser(user) {
         return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then(async userCredential => {
             const idToken = await userCredential.user.getIdToken()
+            const userInfo = userCredential.user
+            console.log("Token: ", idToken);
+            console.log("userInfo: ", userInfo);
 
-            //Pega os dados do Firestore
-            /*
-            const userInfo = userCredential.user;
-            return this.database.getDocumentById('USER', userInfo.uid)
-                .then((userData) => {
-                    if (userData) {
-                        console.log("Usuário logado com sucesso", userData);
-                        return { ...userInfo, ...userData };
-                    } else {
-                        console.error("Usuário não encontrado no Firestore");
-                        return null;
-                    }
-                });
-            */
             return idToken;
         }).catch((err) => {
-            console.error(err);
             throw err;
         });
     }
@@ -66,9 +55,18 @@ class UserRepository {
         });
     }
 
+    async sendPasswordResetEmail(email) {
+        return this.doAuth.doPasswordReset(email).then(() => {
+            return true;
+        }).catch(err => {
+            console.error("Erro ao enviar e-mail de recuperação", err);
+            throw err
+        });
+    }
+
     async signOutUser() {
-        return this.doAuth.doSignOut().then((result) => {
-            return result;
+        return this.doAuth.doSignOut().then(() => {
+            return true;
         }).catch((err) => {
             console.error("Erro ao deslogar o usuário", err)
             throw err;
@@ -78,3 +76,18 @@ class UserRepository {
 }
 
 export default UserRepository;
+
+//Pega os dados do Firestore
+            /*
+            const userInfo = userCredential.user;
+            return this.database.getDocumentById('USER', userInfo.uid)
+                .then((userData) => {
+                    if (userData) {
+                        console.log("Usuário logado com sucesso", userData);
+                        return { ...userInfo, ...userData };
+                    } else {
+                        console.error("Usuário não encontrado no Firestore");
+                        return null;
+                    }
+                });
+            */
