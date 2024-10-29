@@ -8,6 +8,19 @@ import userRouter from "./src/routes/userRouter.js";
 
 //TODO: Criar uma classe de preFligtCheck
 
+//Campo de testes
+
+import Database from "./src/config/database.js";
+import DoAuth from "./src/config/auth.js";
+
+const doAuth = new DoAuth();
+const database = new Database();
+const uid = "2RIipQeCy1Z4A0MwiXH3UbCCc1N2"
+
+//doAuth.doDeleteUser(uid)
+
+//Campo de testes
+
 firebaseApp
 
 dotenv.config();

@@ -5,6 +5,8 @@ import {
     updatePassword,
     signInWithEmailAndPassword,
     signOut,
+    deleteUser,
+    
 } from "firebase/auth";
 import { auth } from "./firebaseConfig.js";
 
@@ -44,6 +46,21 @@ class DoAuth {
             console.error("Erro ao enviar e-mail de redefinição de senha: ", error);
             throw error;
         });
+    }
+
+    async doDeleteUser(uid) {
+        try {
+            await deleteUser(uid);
+            console.log("Usuário deletado com sucesso.");
+            return true;
+        } catch (error) {
+            console.error("Erro ao deletar o usuário:", error);
+            throw error;
+        }
+    }
+
+    async doUpdateEmail(){
+
     }
 
     //TODO: Implemetar os métodos abaixo -- Testalos

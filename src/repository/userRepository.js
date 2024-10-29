@@ -22,9 +22,9 @@ class UserRepository {
     async signInUser(user) {
         return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then(async userCredential => {
             const idToken = await userCredential.user.getIdToken()
-            const userInfo = userCredential.user
-            console.log("Token: ", idToken);
-            console.log("userInfo: ", userInfo);
+            //const userInfo = userCredential.user
+            // console.log("Token: ", idToken);
+            // console.log("userInfo: ", userInfo);
 
             return idToken;
         }).catch((err) => {

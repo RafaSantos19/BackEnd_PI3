@@ -5,6 +5,7 @@ class UserController {
   constructor() {
     this.userRepository = new UserRepository();
   }
+  //TODO: Crie um método de validação de campos para deixar o código mais limpo
 
   async createUser(req, res) {
 
@@ -23,6 +24,7 @@ class UserController {
     });
   }
 
+  //TODO: Otimizar esse método
   async signIn(req, res) {
     const { email, password } = req.body;
 
@@ -33,10 +35,9 @@ class UserController {
     const user = { email, password };
 
     try {
-        const { userInfo, idToken } = await this.userRepository.signInUser(user);
+        const idToken = await this.userRepository.signInUser(user);
         res.status(200).json({
             message: "Login realizado com sucesso",
-            userInfo,
             token: idToken
         });
     } catch (err) {
@@ -53,13 +54,12 @@ class UserController {
     });
   }
 
+  //TODO: Otimizar esse método
   async sendPasswordResetEmail(req, res) {
     const { email } = req.body;
-
-    if (!email) {
+   if (!email) {
       return res.status(400).json({ message: "Email é necessário" });
     }
-
     try {
       await this.userRepository.sendPasswordResetEmail(email);
       res.status(200).json({ message: "Email de recuperação enviado" });
