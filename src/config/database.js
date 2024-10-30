@@ -35,7 +35,7 @@ class Database {
 
     async getDocumentById(collectionName, id) {
         try {
-            const docRef = doc(db, collectionName);
+            const docRef = doc(db, collectionName, id); // Aqui tem que adicionar o id (uid do usuário)
             const document = await getDoc(docRef);
 
             if(document.exists()){

@@ -28,9 +28,9 @@ class UserRepository {
         });
     }
 
-    //TODO: Implementar o método de update Password e Email
+    //TODO: Implementar o método de update de Email
     async updateUser(uid, userData) {
-        return this.database.updateDocument("USER", uid, userData).then(() => {
+        return this.database.updateDocument("user", uid, userData).then(() => {
             return true;
         }).catch(err => {
             console.error("Erro ao atualizar dados do usuário: ", err);
@@ -51,7 +51,7 @@ class UserRepository {
     }
 
     async getUserById(uid) {
-        return this.database.getDocumentById("USER", uid).then(userData => {
+        return this.database.getDocumentById("user", uid).then(userData => {
             if (userData) {
                 return userData;
             } else {
