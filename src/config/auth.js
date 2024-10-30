@@ -5,10 +5,9 @@ import {
     updatePassword,
     signInWithEmailAndPassword,
     signOut,
-    deleteUser,
-    
 } from "firebase/auth";
 import { auth } from "./firebaseConfig.js";
+import { adminAuth } from "./firebaseAdmin.js"
 
 class DoAuth {
 
@@ -50,8 +49,7 @@ class DoAuth {
 
     async doDeleteUser(uid) {
         try {
-            await deleteUser(uid);
-            console.log("Usuário deletado com sucesso.");
+            await adminAuth.deleteUser(uid) ;
             return true;
         } catch (error) {
             console.error("Erro ao deletar o usuário:", error);
@@ -59,11 +57,12 @@ class DoAuth {
         }
     }
 
+    //Não necessário --> implemetação futura
     async doUpdateEmail(){
 
     }
 
-    //TODO: Implemetar os métodos abaixo -- Testalos
+    //TODO: Implemetar os métodos abaixo -- Testalos (Não irão funcionar por conta do auth.currentUser)
     async doPasswordChange(password) {
         try {
             return await updatePassword(auth.currentUser, password);

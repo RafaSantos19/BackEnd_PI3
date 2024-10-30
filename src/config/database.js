@@ -17,14 +17,12 @@ class Database {
             phone: user.phone,
         };
 
-        console.log("Teste de DATA:", data);
-
         try {
             if (docId) {
                 // Cria ou substitui o documento usando o ID fornecido
                 const documentRef = doc(db, 'user', docId);
                 await setDoc(documentRef, data);
-            } else {
+            } else { 
                 // Adiciona um documento com ID automático
                 const myCollection = collection(db, 'user');
                 await addDoc(myCollection, data);
@@ -67,7 +65,6 @@ class Database {
         try {
             const docRef = doc(db, collectionName, id);
             await deleteDoc(docRef);
-            console.log("Documento deletado");    
         } catch (error) {
             console.error("Erro ao deletar documento: ". error);
             throw error;

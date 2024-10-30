@@ -8,7 +8,7 @@ import userRouter from "./src/routes/userRouter.js";
 
 //TODO: Criar uma classe de preFligtCheck
 
-//Campo de testes
+//FIXME:Campo de testes
 
 import Database from "./src/config/database.js";
 import DoAuth from "./src/config/auth.js";
@@ -18,8 +18,9 @@ const database = new Database();
 const uid = "2RIipQeCy1Z4A0MwiXH3UbCCc1N2"
 
 //doAuth.doDeleteUser(uid)
+database.deleteDocument('user', uid)
 
-//Campo de testes
+//FIXME:Campo de testes
 
 firebaseApp
 

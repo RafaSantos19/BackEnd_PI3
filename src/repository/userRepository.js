@@ -22,16 +22,13 @@ class UserRepository {
     async signInUser(user) {
         return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then(async userCredential => {
             const idToken = await userCredential.user.getIdToken()
-            //const userInfo = userCredential.user
-            // console.log("Token: ", idToken);
-            // console.log("userInfo: ", userInfo);
-
             return idToken;
         }).catch((err) => {
             throw err;
         });
     }
 
+    //TODO: Implementar o método de update Password e Email
     async updateUser(uid, userData) {
         return this.database.updateDocument("USER", uid, userData).then(() => {
             return true;
@@ -39,6 +36,18 @@ class UserRepository {
             console.error("Erro ao atualizar dados do usuário: ", err);
             throw err;
         });
+    }
+
+    async deleteUser(uid){
+        return this.doAuth.doDeleteUser(uid).then( () => {
+            return this.database.deleteDocument('user', uid).then( () => {
+                return true;
+            }).catch(err => {
+                throw err;
+            })
+        }).catch(err => {
+            throw err;
+        })
     }
 
     async getUserById(uid) {

@@ -8,5 +8,6 @@ userRouter.post("/create", userController.createUser.bind(userController));
 userRouter.post("/signin", userController.signIn.bind(userController));
 userRouter.post("/logout", userController.singOut.bind(userController));
 userRouter.post("/forgot-password", userController.sendPasswordResetEmail.bind(userController));
+userRouter.delete("delete", userController.deleteUser.bind(userController))
 
 export default userRouter;
