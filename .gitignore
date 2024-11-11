@@ -6,3 +6,6 @@ node_modules/
 
 # Ignorar firebase-adminsdk.json
 firebase-adminsdk.json
+
+#Service account JSON
+service-account.json

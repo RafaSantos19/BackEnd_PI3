@@ -10,15 +10,17 @@ import userRouter from "./src/routes/userRouter.js";
 
 //FIXME:Campo de testes
 
-import Database from "./src/config/database.js";
-import DoAuth from "./src/config/auth.js";
+import { createCalendarEvent } from "./src/services/googleCalendar.js";
 
-const doAuth = new DoAuth();
-const database = new Database();
-const uid = "2RIipQeCy1Z4A0MwiXH3UbCCc1N2"
-
-//doAuth.doDeleteUser(uid)
-database.deleteDocument('user', uid)
+const data = {
+    "summary": "Reunião de Projeto",
+    "location": "Sala de Conferências 1, Empresa XYZ, São Paulo, SP",
+    "description": "Reunião para discutir o andamento do projeto e próximos passos.",
+    "startDateTime": "2024-11-15T10:00:00-03:00",
+    "endDateTime": "2024-11-15T11:00:00-03:00"
+  }
+  
+//createCalendarEvent(data)
 
 //FIXME:Campo de testes
 

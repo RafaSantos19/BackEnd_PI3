@@ -1,6 +1,5 @@
 import User from '../models/userModel.js'
 import UserRepository from '../repository/userRepository.js';
-import verifyToken from '../config/middleware.js';
 
 class UserController {
   constructor() {
@@ -110,6 +109,10 @@ class UserController {
     }).catch((err) => {
       res.status(500).json({ message: "Erro ao deslogar usuário", error: err })
     });
+  }
+
+  async createCalendarEvent(){
+    
   }
 
 }
