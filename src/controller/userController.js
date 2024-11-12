@@ -111,10 +111,6 @@ class UserController {
     });
   }
 
-  async createCalendarEvent(){
-    
-  }
-
 }
 
 export default UserController;

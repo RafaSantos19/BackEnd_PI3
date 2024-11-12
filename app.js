@@ -2,15 +2,16 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-
 import { firebaseApp } from "./src/config/firebaseConfig.js";
 import userRouter from "./src/routes/userRouter.js";
-
+import calendarRouter from "./src/routes/calendarRouter.js";
 //TODO: Criar uma classe de preFligtCheck
 
 //FIXME:Campo de testes
 
-import { createCalendarEvent } from "./src/services/googleCalendar.js";
+import GoogleCalendarService from "./src/services/googleCalendar.js";
+
+this.googleCalendarService = new GoogleCalendarService()
 
 const data = {
     "summary": "Reunião de Projeto",
@@ -35,7 +36,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use("/user", userRouter)
+app.use("/user", userRouter);
+app.use("/calendar", calendarRouter);
 
 app.listen(port, err => {
     if(err){
