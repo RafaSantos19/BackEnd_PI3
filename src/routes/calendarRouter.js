@@ -1,5 +1,5 @@
 import express from 'express';
-import CalendarController from '../controller/calendarController';
+import CalendarController from '../controller/calendarController.js';
 
 const calendarRouter = express.Router();
 const calendarController = new CalendarController();

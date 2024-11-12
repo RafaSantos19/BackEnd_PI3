@@ -11,7 +11,7 @@ import calendarRouter from "./src/routes/calendarRouter.js";
 
 import GoogleCalendarService from "./src/services/googleCalendar.js";
 
-this.googleCalendarService = new GoogleCalendarService()
+const googleCalendarService = new GoogleCalendarService()
 
 const data = {
     "summary": "Reunião de Projeto",
@@ -20,7 +20,7 @@ const data = {
     "startDateTime": "2024-11-15T10:00:00-03:00",
     "endDateTime": "2024-11-15T11:00:00-03:00"
   }
-  
+
 //createCalendarEvent(data)
 
 //FIXME:Campo de testes

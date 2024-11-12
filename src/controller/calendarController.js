@@ -1,4 +1,4 @@
-import GoogleCalendarService from "../services/googleCalendar";
+import GoogleCalendarService from "../services/googleCalendar.js";
 
 class CalendarController{
     constructor(){
@@ -16,17 +16,18 @@ class CalendarController{
     }
 
     async listEvents(req, res){
-        this.googleCalendarService.listEvents( events => {
+        try {
+            const events = await this.googleCalendarService.listEvents();
             res.status(200).json(events);
-        }).catch( err => {
-            res.status(400).json({message: "Erro ao listar enventos", error: err});
-        });
+        } catch (err) {
+            res.status(400).json({ message: "Erro ao listar eventos", error: err.message });
+        }
     }
 
     async getEvent(req, res){
-        const eventId = req.params;
+        const {id} = req.body;
 
-        this.googleCalendarService.getEvent(eventId).then( event => {
+        this.googleCalendarService.getEvent(id).then( event => {
             res.status(200).json(event);
         }).catch( err => {
             res.status(404).json({ message: "Evento não encontrado", error: err});
