@@ -20,9 +20,8 @@ class UserRepository {
     };
 
     async signInUser(user) {
-        return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then(async userCredential => {
-            const idToken = await userCredential.user.getIdToken()
-            return idToken;
+        return this.doAuth.doSignInWithEmailAndPassword(user.email, user.password).then((userCredential) => {
+            return userCredential.user;
         }).catch((err) => {
             throw err;
         });
@@ -38,9 +37,9 @@ class UserRepository {
         });
     }
 
-    async deleteUser(uid){
-        return this.doAuth.doDeleteUser(uid).then( () => {
-            return this.database.deleteDocument('user', uid).then( () => {
+    async deleteUser(uid) {
+        return this.doAuth.doDeleteUser(uid).then(() => {
+            return this.database.deleteDocument('user', uid).then(() => {
                 return true;
             }).catch(err => {
                 throw err;
@@ -62,6 +61,15 @@ class UserRepository {
             console.error("Erro ao buscar dados do usuário: ", err);
             throw err;
         });
+    }
+
+    async sendEmailVerification(user) {
+        try {
+            return await this.doAuth.doSendEmailVerification(user);
+        } catch (err) {
+            console.error("Erro ao enviar e-mail de verificação: ", err);
+            throw err;
+        }
     }
 
     async sendPasswordResetEmail(email) {
@@ -87,16 +95,16 @@ class UserRepository {
 export default UserRepository;
 
 //Pega os dados do Firestore
-            /*
-            const userInfo = userCredential.user;
-            return this.database.getDocumentById('USER', userInfo.uid)
-                .then((userData) => {
-                    if (userData) {
-                        console.log("Usuário logado com sucesso", userData);
-                        return { ...userInfo, ...userData };
-                    } else {
-                        console.error("Usuário não encontrado no Firestore");
-                        return null;
-                    }
-                });
-            */
+/*
+const userInfo = userCredential.user;
+return this.database.getDocumentById('USER', userInfo.uid)
+    .then((userData) => {
+        if (userData) {
+            console.log("Usuário logado com sucesso", userData);
+            return { ...userInfo, ...userData };
+        } else {
+            console.error("Usuário não encontrado no Firestore");
+            return null;
+        }
+    });
+*/

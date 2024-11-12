@@ -49,7 +49,7 @@ class DoAuth {
 
     async doDeleteUser(uid) {
         try {
-            await adminAuth.deleteUser(uid) ;
+            await adminAuth.deleteUser(uid);
             return true;
         } catch (error) {
             console.error("Erro ao deletar o usuário:", error);
@@ -58,7 +58,7 @@ class DoAuth {
     }
 
     //Não necessário --> implemetação futura
-    async doUpdateEmail(){
+    async doUpdateEmail() {
 
     }
 
@@ -72,14 +72,16 @@ class DoAuth {
         }
     };
 
-    async doSendEmailVerification() {
+    async doSendEmailVerification(user) {
         try {
-            return await sendEmailVerification(auth.currentUser, { url: `${window.location.origin}/home` });
+          return await sendEmailVerification(user, {
+            url: 'http://localhost:5173/login'
+          });
         } catch (error) {
-            console.error("Erro ao enviar e-mail de verificação: ", error);
-            throw error;
+          console.error("Erro ao enviar e-mail de verificação: ", error);
+          throw error;
         }
-    };
+      }
 
 };
 

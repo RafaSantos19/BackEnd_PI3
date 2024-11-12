@@ -11,16 +11,23 @@ class UserController {
     const { name, lastName, email, password, phone } = req.body;
 
     if (!name || !lastName || !email || !password || !phone) {
-      return res.status(400).json({ message: "Informações invalidas" });
-    };
+      return res.status(400).json({ message: "Informações inválidas" });
+    }
 
     const user = new User(name, lastName, email, password, phone);
 
-    this.userRepository.createUser(user).then(() => {
-      res.status(201).json({ message: "Usuário criado com sucesso" })
-    }).catch(err => {
-      res.status(500).json(err)
-    });
+    try {
+      // Cria o usuário e obtém as credenciais do usuário
+      const userCredential = await this.userRepository.createUser(user);
+
+      // Envia o e-mail de verificação
+      await this.userRepository.sendEmailVerification(userCredential.user);
+
+      res.status(201).json({ message: "Usuário criado com sucesso. Verifique seu e-mail para ativar a conta." });
+    } catch (err) {
+      console.error("Erro ao criar usuário:", err);
+      res.status(500).json({ message: "Erro ao criar usuário", error: err.message });
+    }
   }
 
   //TODO: Otimizar esse método
@@ -31,16 +38,22 @@ class UserController {
       return res.status(400).json({ message: "Informações inválidas" });
     }
 
-    const user = { email, password };
-
     try {
-      const idToken = await this.userRepository.signInUser(user);
+      const user = await this.userRepository.signInUser({ email, password });
+
+      // Verifique se o e-mail foi verificado
+      if (!user.emailVerified) {
+        return res.status(403).json({ message: "E-mail não verificado. Verifique seu e-mail para ativar a conta." });
+      }
+
+      // Gera o token apenas se o e-mail for verificado
+      const idToken = await user.getIdToken();
       res.status(200).json({
         message: "Login realizado com sucesso",
         token: idToken
       });
     } catch (err) {
-      console.error("Erro ao fazer login:", err); // Log detalhado para análise
+      console.error("Erro ao fazer login:", err);
       res.status(500).json({ message: "Erro ao fazer login", error: err.message });
     }
   }
@@ -65,9 +78,9 @@ class UserController {
     try {
       const uid = req.uid;
       const userData = req.body;
-  
+
       await this.userRepository.updateUser(uid, userData);
-  
+
       res.status(200).json({ message: "Dados atualizados com sucesso" });
     } catch (error) {
       console.error("Erro ao atualizar perfil do usuário:", error);
