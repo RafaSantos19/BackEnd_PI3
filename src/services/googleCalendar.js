@@ -17,44 +17,44 @@ async function getServiceAccountAuth() {
   return auth;
 }
 
-class GoogleCalendarService{
-  constructor(){}
+class GoogleCalendarService {
+  constructor() { }
 
   async createCalendarEvent(eventData) {
     const auth = await getServiceAccountAuth();
     const calendar = google.calendar({ version: 'v3', auth });
-    
+
     const event = {
       summary: eventData.summary,
       location: eventData.location,
       description: eventData.description,
       start: {
-        dateTime: eventData.startDateTime, // formato 'YYYY-MM-DDTHH:MM:SSZ'
+        dateTime: eventData.startDateTime,
         timeZone: 'America/Sao_Paulo',
       },
       end: {
-        dateTime: eventData.endDateTime, // formato 'YYYY-MM-DDTHH:MM:SSZ'
+        dateTime: eventData.endDateTime,
         timeZone: 'America/Sao_Paulo',
       },
     };
-  
+
     try {
       const response = await calendar.events.insert({
-        calendarId: process.env.APP_CALENDAR_ID, // ou o ID do calendário compartilhado
+        calendarId: process.env.APP_CALENDAR_ID,
         resource: event,
       });
-      console.log('Evento criado: %s', response.data.htmlLink);
+      //console.log('Evento criado: %s', response.data.htmlLink);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar evento:', error);
       throw new Error('Não foi possível criar o evento.');
     }
   }
-  
+
   async listEvents() {
     const auth = await getServiceAccountAuth();
     const calendar = google.calendar({ version: 'v3', auth });
-  
+
     const response = await calendar.events.list({
       calendarId: process.env.APP_CALENDAR_ID,
       timeMin: new Date().toISOString(),
@@ -62,26 +62,26 @@ class GoogleCalendarService{
       singleEvents: true,
       orderBy: 'startTime',
     });
-  
+
     return response.data.items;
   }
-  
+
   async getEvent(eventId) {
     const auth = await getServiceAccountAuth();
     const calendar = google.calendar({ version: 'v3', auth });
-    
+
     const response = await calendar.events.get({
       calendarId: process.env.APP_CALENDAR_ID,
       eventId: eventId,
     });
-  
+
     return response.data;
   }
-  
+
   async updateEvent(eventId, eventData) {
     const auth = await getServiceAccountAuth();
     const calendar = google.calendar({ version: 'v3', auth });
-  
+
     const updatedEvent = {
       summary: eventData.summary,
       location: eventData.location,
@@ -95,25 +95,25 @@ class GoogleCalendarService{
         timeZone: 'America/Sao_Paulo',
       },
     };
-  
+
     const response = await calendar.events.update({
       calendarId: process.env.APP_CALENDAR_ID,
       eventId: eventId,
       resource: updatedEvent,
     });
-  
+
     return response.data;
   }
-  
+
   async deleteEvent(eventId) {
     const auth = await getServiceAccountAuth();
     const calendar = google.calendar({ version: 'v3', auth });
-  
+
     await calendar.events.delete({
       calendarId: process.env.APP_CALENDAR_ID,
       eventId: eventId,
     });
-  
+
     return true;
   }
 }

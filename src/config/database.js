@@ -1,14 +1,8 @@
-import { doc, setDoc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig.js';
 
-//TODO:Otimizar todos os métodos desta classe
 class Database {
 
-    /*
-    TODO: Os métodos de adicionar documento precisam ser revisados quando as informações de 
-    agendamento forem armazenadas. No momento este método cria somente usuários, mas tem a 
-    possibilidade dele se tornar mais genérico
-    */
     async addUserDocument(user, docId = null) {
         const data = {
             name: user.name,
@@ -19,12 +13,25 @@ class Database {
 
         try {
             if (docId) {
-                // Cria ou substitui o documento usando o ID fornecido
                 const documentRef = doc(db, 'user', docId);
                 await setDoc(documentRef, data);
             } else { 
-                // Adiciona um documento com ID automático
                 const myCollection = collection(db, 'user');
+                await addDoc(myCollection, data);
+            }
+        } catch (error) {
+            console.error("Erro ao adicionar documento:", error);
+            throw error;
+        }
+    }
+
+    async addCalendarDocument(data, docId = null){
+        try {
+            if (docId) {
+                const documentRef = doc(db, 'agendamentos', docId);
+                await setDoc(documentRef, data);
+            } else { 
+                const myCollection = collection(db, 'agendamentos');
                 await addDoc(myCollection, data);
             }
         } catch (error) {
@@ -35,7 +42,7 @@ class Database {
 
     async getDocumentById(collectionName, id) {
         try {
-            const docRef = doc(db, collectionName, id); // Aqui tem que adicionar o id (uid do usuário)
+            const docRef = doc(db, collectionName, id); 
             const document = await getDoc(docRef);
 
             if(document.exists()){

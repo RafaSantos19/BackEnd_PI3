@@ -2,7 +2,6 @@ import {
     createUserWithEmailAndPassword,
     sendEmailVerification,
     sendPasswordResetEmail,
-    updatePassword,
     signInWithEmailAndPassword,
     signOut,
 } from "firebase/auth";
@@ -56,21 +55,6 @@ class DoAuth {
             throw error;
         }
     }
-
-    //Não necessário --> implemetação futura
-    async doUpdateEmail() {
-
-    }
-
-    //TODO: Implemetar os métodos abaixo -- Testalos (Não irão funcionar por conta do auth.currentUser)
-    async doPasswordChange(password) {
-        try {
-            return await updatePassword(auth.currentUser, password);
-        } catch (error) {
-            console.error("Erro ao atualizar a senha: ", error);
-            throw error;
-        }
-    };
 
     async doSendEmailVerification(user) {
         try {
