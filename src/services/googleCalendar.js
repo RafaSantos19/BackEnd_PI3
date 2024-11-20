@@ -1,29 +1,32 @@
 import { google } from 'googleapis';
 import { readFile } from 'fs/promises';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config()
+dotenv.config();
 
-// Carrega as credenciais da conta de serviço
+// Caminho para as credenciais da conta de serviço
 const CREDENTIALS_PATH = path.join(process.cwd(), 'service-account.json');
 
 async function getServiceAccountAuth() {
   const credentials = JSON.parse(await readFile(CREDENTIALS_PATH, 'utf-8'));
-  const auth = new google.auth.GoogleAuth({
+  return new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/calendar'],
   });
-  return auth;
 }
 
 class GoogleCalendarService {
-  constructor() { }
+  constructor() {
+    this.initializeAuth();
+  }
+
+  async initializeAuth() {
+    this.auth = await getServiceAccountAuth();
+    this.calendar = google.calendar({ version: 'v3', auth: this.auth });
+  }
 
   async createCalendarEvent(eventData) {
-    const auth = await getServiceAccountAuth();
-    const calendar = google.calendar({ version: 'v3', auth });
-
     const event = {
       summary: eventData.summary,
       location: eventData.location,
@@ -39,49 +42,66 @@ class GoogleCalendarService {
     };
 
     try {
-      const response = await calendar.events.insert({
+      const response = await this.calendar.events.insert({
         calendarId: process.env.APP_CALENDAR_ID,
         resource: event,
       });
-      //console.log('Evento criado: %s', response.data.htmlLink);
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar evento:', error);
+      console.error('Erro ao criar evento:', error.message);
       throw new Error('Não foi possível criar o evento.');
     }
   }
 
+  async checkAvailability(startDateTime, endDateTime) {
+    const calendarId = process.env.APP_CALENDAR_ID;
+
+    const requestBody = {
+      timeMin: startDateTime,
+      timeMax: endDateTime,
+      timeZone: 'America/Sao_Paulo',
+      items: [{ id: calendarId }],
+    };
+
+    try {
+      const response = await this.calendar.freebusy.query({ requestBody });
+      return response.data.calendars[calendarId]?.busy || [];
+    } catch (error) {
+      console.error('Erro ao verificar disponibilidade:', error.message);
+      throw new Error('Não foi possível verificar a disponibilidade.');
+    }
+  }
+
   async listEvents() {
-    const auth = await getServiceAccountAuth();
-    const calendar = google.calendar({ version: 'v3', auth });
-
-    const response = await calendar.events.list({
-      calendarId: process.env.APP_CALENDAR_ID,
-      timeMin: new Date().toISOString(),
-      maxResults: 10,
-      singleEvents: true,
-      orderBy: 'startTime',
-    });
-
-    return response.data.items;
+    try {
+      const response = await this.calendar.events.list({
+        calendarId: process.env.APP_CALENDAR_ID,
+        timeMin: new Date().toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: 'startTime',
+      });
+      return response.data.items;
+    } catch (error) {
+      console.error('Erro ao listar eventos:', error.message);
+      throw new Error('Não foi possível listar os eventos.');
+    }
   }
 
   async getEvent(eventId) {
-    const auth = await getServiceAccountAuth();
-    const calendar = google.calendar({ version: 'v3', auth });
-
-    const response = await calendar.events.get({
-      calendarId: process.env.APP_CALENDAR_ID,
-      eventId: eventId,
-    });
-
-    return response.data;
+    try {
+      const response = await this.calendar.events.get({
+        calendarId: process.env.APP_CALENDAR_ID,
+        eventId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao recuperar evento:', error.message);
+      throw new Error('Não foi possível recuperar o evento.');
+    }
   }
 
   async updateEvent(eventId, eventData) {
-    const auth = await getServiceAccountAuth();
-    const calendar = google.calendar({ version: 'v3', auth });
-
     const updatedEvent = {
       summary: eventData.summary,
       location: eventData.location,
@@ -96,25 +116,30 @@ class GoogleCalendarService {
       },
     };
 
-    const response = await calendar.events.update({
-      calendarId: process.env.APP_CALENDAR_ID,
-      eventId: eventId,
-      resource: updatedEvent,
-    });
-
-    return response.data;
+    try {
+      const response = await this.calendar.events.update({
+        calendarId: process.env.APP_CALENDAR_ID,
+        eventId,
+        resource: updatedEvent,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao atualizar evento:', error.message);
+      throw new Error('Não foi possível atualizar o evento.');
+    }
   }
 
   async deleteEvent(eventId) {
-    const auth = await getServiceAccountAuth();
-    const calendar = google.calendar({ version: 'v3', auth });
-
-    await calendar.events.delete({
-      calendarId: process.env.APP_CALENDAR_ID,
-      eventId: eventId,
-    });
-
-    return true;
+    try {
+      await this.calendar.events.delete({
+        calendarId: process.env.APP_CALENDAR_ID,
+        eventId,
+      });
+      return true;
+    } catch (error) {
+      console.error('Erro ao excluir evento:', error.message);
+      throw new Error('Não foi possível excluir o evento.');
+    }
   }
 }
 

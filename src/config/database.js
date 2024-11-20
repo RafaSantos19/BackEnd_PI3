@@ -19,7 +19,7 @@ class Database {
                 const myCollection = collection(db, 'user');
                 await addDoc(myCollection, data);
             }
-        } catch (error) {
+        } catch (error) {  
             console.error("Erro ao adicionar documento:", error);
             throw error;
         }
@@ -73,7 +73,7 @@ class Database {
             const docRef = doc(db, collectionName, id);
             await deleteDoc(docRef);
         } catch (error) {
-            console.error("Erro ao deletar documento: ". error);
+            console.error("Erro ao deletar documento: ", error);
             throw error;
         }
     }

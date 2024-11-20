@@ -1,18 +1,34 @@
+import CalendarRepository from "../repository/calendarRepository.js";
 import GoogleCalendarService from "../services/googleCalendar.js";
 
 class CalendarController{
     constructor(){
+        this.calendarRepository = new CalendarRepository()
         this.googleCalendarService = new GoogleCalendarService();
     }
 
     async createCalendarEvent(req, res){
-         const event = req.body;
+        const event = req.body;
+        console.log("CONTROLLER EVENTO: ", event)
+        //console.log("TESTE DE EMAIL: ", event.email)
+    try {
+        const result = await this.calendarRepository.createCalendarEvent(event);
 
-         this.googleCalendarService.createCalendarEvent(event).then( response => {
-            res.status(201).json({message: "Evento criado com sucesso", link: response.htmllink});
-         }).catch( err => {
-            res.status(400).json({message: "Erro ao criar envento", error: err});
-         });
+        if (!result.success) {
+            return res.status(409).json({
+                message: result.message,
+                busyPeriods: result.busyPeriods,
+            });
+        }
+        res.status(201).json({
+            message: result.message,
+            event: result.event,
+        });
+    } catch (error) {
+        console.error("Erro ao criar evento:", error);
+        res.status(500).json({ message: "Erro ao criar evento", error: error.message });
+    }
+         
     }
 
     async listEvents(req, res){
