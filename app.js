@@ -5,25 +5,6 @@ import dotenv from "dotenv";
 import { firebaseApp } from "./src/config/firebaseConfig.js";
 import userRouter from "./src/routes/userRouter.js";
 import calendarRouter from "./src/routes/calendarRouter.js";
-//TODO: Criar uma classe de preFligtCheck
-
-//FIXME:Campo de testes
-
-import GoogleCalendarService from "./src/services/googleCalendar.js";
-
-const googleCalendarService = new GoogleCalendarService()
-
-const data = {
-    "summary": "Reunião de Projeto",
-    "location": "Sala de Conferências 1, Empresa XYZ, São Paulo, SP",
-    "description": "Reunião para discutir o andamento do projeto e próximos passos.",
-    "startDateTime": "2024-11-15T10:00:00-03:00",
-    "endDateTime": "2024-11-15T11:00:00-03:00"
-  }
-
-//createCalendarEvent(data)
-
-//FIXME:Campo de testes
 
 firebaseApp
 

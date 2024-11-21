@@ -50,7 +50,8 @@ class UserController {
       const idToken = await user.getIdToken();
       res.status(200).json({
         message: "Login realizado com sucesso",
-        token: idToken
+        token: idToken,
+        userEmail: user.email
       });
     } catch (err) {
       console.error("Erro ao fazer login:", err);

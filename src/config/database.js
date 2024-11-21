@@ -1,4 +1,15 @@
-import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+import { 
+    doc, 
+    setDoc, 
+    getDoc, 
+    updateDoc, 
+    deleteDoc, 
+    collection, 
+    addDoc, 
+    where, 
+    getDocs, 
+    query } from 'firebase/firestore';
+
 import { db } from './firebaseConfig.js';
 
 class Database {
@@ -54,6 +65,23 @@ class Database {
         } catch (error) {
             console.error("Erro ao buscar documento: ", error);
             throw error;
+        }
+    }
+
+    async listUserEvents(email){
+        try {
+            const myCollection = collection(db, "agendamentos");
+            const queryData = query(myCollection, where("email", "==", email));
+
+            const querySnapshot = await getDocs(queryData);
+            const userEvents = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            return userEvents;
+        } catch (error) {
+            console.error("Erro ao buscar enventos: ", error);
+            return [];
         }
     }
 

@@ -9,8 +9,6 @@ class CalendarController{
 
     async createCalendarEvent(req, res){
         const event = req.body;
-        console.log("CONTROLLER EVENTO: ", event)
-        //console.log("TESTE DE EMAIL: ", event.email)
     try {
         const result = await this.calendarRepository.createCalendarEvent(event);
 
@@ -29,6 +27,16 @@ class CalendarController{
         res.status(500).json({ message: "Erro ao criar evento", error: error.message });
     }
          
+    }
+
+    async listUserEvents(req, res){
+        try {
+            const {email} = req.body;
+            const userEvents = await this.calendarRepository.listUserEvents(email)
+            res.status(201).json(userEvents);
+        } catch (error) {
+            res.status(404).json({message: "Agendamentos não encontrados"}, [])
+        }
     }
 
     async listEvents(req, res){

@@ -8,7 +8,6 @@ class CalendarRepository {
     }
 
     async createCalendarEvent(event) {
-        
         try {
             const busyPeriods = await this.googleCalendarService.checkAvailability(event.startDateTime, event.endDateTime);
     
@@ -36,8 +35,14 @@ class CalendarRepository {
     }
     
     //TODO: Pegar todos os agendamentos do usuário
-    async listUserEvents(){
-
+    async listUserEvents(email){
+        try {
+            const userEvents = await this.database.listUserEvents(email);
+            return userEvents;
+        } catch (error) {   
+            console.error("Erro ao listar eventos: ", error);
+            return [];
+        }
     }
 
 }
