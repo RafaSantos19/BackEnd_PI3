@@ -88,6 +88,28 @@ class GoogleCalendarService {
     }
   }
 
+  async listEventsByDate(date) {
+    try {
+      // Converter a data recebida para o fuso horário local
+      const startOfDay = new Date(`${date}T00:00:00-03:00`);
+      const endOfDay = new Date(`${date}T23:59:59-03:00`);
+
+      // Solicitação ao Google Calendar
+      const response = await this.calendar.events.list({
+        calendarId: process.env.APP_CALENDAR_ID,
+        timeMin: startOfDay.toISOString(),
+        timeMax: endOfDay.toISOString(),
+        singleEvents: true,
+        orderBy: 'startTime',
+      });
+
+      return response.data.items;
+    } catch (error) {
+      console.error('Erro ao listar eventos:', error.message);
+      throw new Error('Não foi possível listar os eventos.');
+    }
+  }
+
   async getEvent(eventId) {
     try {
       const response = await this.calendar.events.get({

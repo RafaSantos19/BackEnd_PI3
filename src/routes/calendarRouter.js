@@ -10,5 +10,6 @@ calendarRouter.get('/list-events', calendarController.listEvents.bind(calendarCo
 calendarRouter.get('/list-user-events', calendarController.listUserEvents.bind(calendarController));
 calendarRouter.put('/update-events', calendarController.updateEvent.bind(calendarController));
 calendarRouter.delete('/delete-events', calendarController.deleteEvent.bind(calendarController));
+calendarRouter.get('/list-by-date', calendarController.listEventsByDate.bind(calendarController));
 
 export default calendarRouter;
