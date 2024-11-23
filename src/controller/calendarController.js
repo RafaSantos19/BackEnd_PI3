@@ -31,7 +31,7 @@ class CalendarController {
 
     async listUserEvents(req, res) {
         try {
-            const { email } = req.body;
+            const { email } = req.query;
             const userEvents = await this.calendarRepository.listUserEvents(email)
             res.status(201).json(userEvents);
         } catch (error) {

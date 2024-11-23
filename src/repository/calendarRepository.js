@@ -10,7 +10,7 @@ class CalendarRepository {
     async createCalendarEvent(event) {
         try {
             const busyPeriods = await this.googleCalendarService.checkAvailability(event.startDateTime, event.endDateTime);
-    
+
             if (busyPeriods.length > 0) {
                 console.log("Horário ocupado! Não é possível criar o evento.");
                 return {
@@ -33,13 +33,12 @@ class CalendarRepository {
             throw error;
         }
     }
-    
-    //TODO: Pegar todos os agendamentos do usuário
-    async listUserEvents(email){
+
+    async listUserEvents(email) {
         try {
             const userEvents = await this.database.listUserEvents(email);
             return userEvents;
-        } catch (error) {   
+        } catch (error) {
             console.error("Erro ao listar eventos: ", error);
             return [];
         }
