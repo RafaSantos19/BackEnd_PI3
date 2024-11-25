@@ -1,9 +1,11 @@
 import User from '../models/userModel.js'
 import UserRepository from '../repository/userRepository.js';
+import Database from '../config/database.js';
 
 class UserController {
   constructor() {
     this.userRepository = new UserRepository();
+    this.database = new Database()
   }
   //TODO: Crie um método de validação de campos para deixar o código mais limpo
 
@@ -40,18 +42,21 @@ class UserController {
 
     try {
       const user = await this.userRepository.signInUser({ email, password });
-
+     
       // Verifique se o e-mail foi verificado
       if (!user.emailVerified) {
         return res.status(403).json({ message: "E-mail não verificado. Verifique seu e-mail para ativar a conta." });
       }
 
+      const userData = await this.database.getDocumentById('user', user.uid);
       // Gera o token apenas se o e-mail for verificado
       const idToken = await user.getIdToken();
       res.status(200).json({
         message: "Login realizado com sucesso",
         token: idToken,
-        userEmail: user.email
+        userEmail: userData.email,
+        userPhone: userData.phone,
+        userName: `${userData.name} ${userData.lastName}`
       });
     } catch (err) {
       console.error("Erro ao fazer login:", err);

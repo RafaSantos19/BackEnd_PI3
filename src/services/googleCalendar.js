@@ -160,7 +160,7 @@ class GoogleCalendarService {
       return true;
     } catch (error) {
       console.error('Erro ao excluir evento:', error.message);
-      throw new Error('Não foi possível excluir o evento.');
+      return false;
     }
   }
 }

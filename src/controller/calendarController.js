@@ -39,9 +39,9 @@ class CalendarController {
         }
     }
 
-    async listEvents(req, res) {
+    async listAllEvents(req, res) {
         try {
-            const events = await this.googleCalendarService.listEvents();
+            const events = await this.calendarRepository.listAllEvents();
             res.status(200).json(events);
         } catch (err) {
             res.status(400).json({ message: "Erro ao listar eventos", error: err.message });
@@ -63,35 +63,24 @@ class CalendarController {
         }
     }
 
-    async getEvent(req, res) {
-        const { id } = req.body;
-
-        this.googleCalendarService.getEvent(id).then(event => {
-            res.status(200).json(event);
-        }).catch(err => {
-            res.status(404).json({ message: "Evento não encontrado", error: err });
-        });
-    }
-
-    async updateEvent(req, res) {
-        const eventId = req.params;
-        const eventData = req.body;
-
-        this.googleCalendarService.updateEvent(eventId, eventData).then(event => {
-            res.status(200).json({ message: "Evento atualizado com sucesso" });
-        }).catch(err => {
-            res.status(400).json({ message: "Erro ao atualizar evento", error: err })
-        });
+    async coutEvents(req, res){
+        try {   
+            const events = await this.calendarRepository.countEvents();
+            res.status(201).json(events);
+        } catch (error) {
+            res.status(400).json({message: "Erro ao contabilizar os serviços: ", error: error});
+        }
     }
 
     async deleteEvent(req, res) {
-        const eventId = req.params;
+        const { eventId } = req.query;
 
-        this.googleCalendarService.deleteEvent(eventId).then(() => {
-            res.status(200).json({ message: "Evento deletado com sucesso" });
-        }).catch(err => {
-            res.status(400).json({ message: "Erro ao deletar evento" });
-        });
+        try {
+            await this.calendarRepository.deleteEvents(eventId);
+            res.status(204).json({message: "Evento deletado com sucesso"});
+        } catch (error) {
+            res.status(400).json({message: "Erro ao deletar evento: "}, error);
+        }
     }
 
 }
