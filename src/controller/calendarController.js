@@ -63,23 +63,28 @@ class CalendarController {
         }
     }
 
-    async coutEvents(req, res){
-        try {   
+    async coutEvents(req, res) {
+        try {
             const events = await this.calendarRepository.countEvents();
             res.status(201).json(events);
         } catch (error) {
-            res.status(400).json({message: "Erro ao contabilizar os serviços: ", error: error});
+            res.status(400).json({ message: "Erro ao contabilizar os serviços: ", error: error });
         }
     }
 
     async deleteEvent(req, res) {
-        const { eventId } = req.query;
+        const eventId = req.query.eventId;
+
+        if (!eventId) {
+            return res.status(400).json({ message: "Parâmetro 'eventId' é obrigatório." });
+        }
 
         try {
             await this.calendarRepository.deleteEvents(eventId);
-            res.status(204).json({message: "Evento deletado com sucesso"});
+            res.status(204).json({ message: "Evento deletado com sucesso" });
         } catch (error) {
-            res.status(400).json({message: "Erro ao deletar evento: "}, error);
+            console.error('Erro ao deletar evento:', error);
+            res.status(500).json({ message: "Erro ao deletar evento", error: error.message });
         }
     }
 
